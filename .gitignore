@@ -1,0 +1,29 @@
+# Credenciales - nunca subir
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+secrets/
+
+# Exportaciones de n8n sin limpiar
+*-with-credentials.json
+n8n-backup/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Dependencias
+node_modules/
+__pycache__/
+venv/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
