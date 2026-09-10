@@ -116,5 +116,5 @@ Resumen: bot de Telegram vía BotFather → instancia de n8n → credenciales de
 
 Proyecto personal en desarrollo. Funcional y probado en conversaciones reales.
 
-Construido por [Mario](#) y su Javier García Pavón.
+Construido por [Mario García León](https://www.linkedin.com/in/mario-garc%C3%ADa-le%C3%B3n-0a76ab420/) y su socio [Javier García Pavón](https://www.linkedin.com/in/javier-garc%C3%ADa-pav%C3%B3n-99a970435/).
 
