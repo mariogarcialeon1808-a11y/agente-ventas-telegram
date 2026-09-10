@@ -1,0 +1,92 @@
+{
+  "name": "Agente de ventas conversacional — Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [-200, 0],
+      "notes": "Recibe los mensajes entrantes. Asignar aqui la credencial de Telegram."
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "PEGAR AQUI EL CONTENIDO DE prompts/system-prompt.md CON LOS MARCADORES {{...}} SUSTITUIDOS"
+        }
+      },
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [120, 0],
+      "notes": "El system prompt vive aqui. Es el nucleo del comportamiento del agente."
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.35
+        }
+      },
+      "id": "anthropic-model",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [40, 220],
+      "notes": "Asignar la credencial de Anthropic y elegir modelo. Temperatura baja para consistencia."
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 12
+      },
+      "id": "simple-memory",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [240, 220],
+      "notes": "Memoria por cliente, indexada por chat_id de Telegram."
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "telegram-send",
+      "name": "Send a text message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [460, 0],
+      "notes": "IMPORTANTE: debe usar exactamente la MISMA credencial que el Telegram Trigger."
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]]
+    },
+    "AI Agent": {
+      "main": [[{ "node": "Send a text message", "type": "main", "index": 0 }]]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Simple Memory": {
+      "ai_memory": [[{ "node": "AI Agent", "type": "ai_memory", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateDescription": "Agente de ventas conversacional en Telegram con n8n y Claude. Plantilla sin credenciales: hay que asignarlas tras importar."
+  }
+}
